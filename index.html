@@ -2,23 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Big Screen Slideshow</title>
     <style>
-        /* Styles optimized for TV screens and mobile displays */
+        /* Forces the page into a strict full-screen window with zero scrollbars */
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
         body, html {
-            width: 100%;
-            height: 100%;
-            background-color: #111; /* Dark background prevents screen burn-in */
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000; /* Pure black backgrounds look best on TVs */
             overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: fixed; /* Prevents mobile browser bouncing/scrolling */
+            top: 0;
+            left: 0;
         }
         .slideshow-container {
             width: 100%;
@@ -30,17 +30,18 @@
             width: 100%;
             height: 100%;
             opacity: 0;
-            transition: opacity 1s ease-in-out; /* Smooth 1-second fade transition */
+            transition: opacity 1000ms ease-in-out; /* Smooth 1-second crossfade */
             display: flex;
             justify-content: center;
             align-items: center;
         }
+        /* The active class makes the current slide visible */
         .slide.active {
             opacity: 1;
         }
         img {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: contain; /* Keeps image proportions perfect without stretching */
         }
     </style>
@@ -50,47 +51,50 @@
     <div class="slideshow-container">
         <!-- Slide 1 -->
         <div class="slide active">
-            <img src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/1000153495.png?raw=true" alt="Slide 1">
+            <img src="https://github.com" alt="Slide 1">
         </div>
         <!-- Slide 2 -->
         <div class="slide">
-            <img src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/2%20of%2030%20new.png?raw=true" alt="Slide 2">
+            <img src="https://github.com" alt="Slide 2">
         </div>
         <!-- Slide 3 -->
         <div class="slide">
-            <img src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/Gemini_Generated_Image_gx3ldvgx3ldvgx3l.png?raw=true" alt="Slide 3">
+            <img src="https://github.com" alt="Slide 3">
         </div>
     </div>
 
     <script>
         // ==========================================
-        // 1. SLIDESHOW LOGIC (Changes every 9 seconds)
+        // 1. FIXED SLIDESHOW LOGIC (Changes every 9 seconds)
         // ==========================================
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
-        const slideInterval = 9000; // 9 seconds in milliseconds
+        const slideInterval = 9000; // 9 seconds
 
         function nextSlide() {
+            if (slides.length === 0) return;
             slides[currentSlide].classList.remove('active');
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
         }
 
+        // Run nextSlide every 9 seconds
         setInterval(nextSlide, slideInterval);
 
 
         // ==========================================
-        // 2. CLOCK REFRESH LOGIC (10 AM, 3 PM, 5 PM)
+        // 2. FIXED CLOCK REFRESH LOGIC (10 AM, 3 PM, 5 PM)
         // ==========================================
         function scheduleNextRefresh() {
             const now = new Date();
             
-            // Define target hours using 24-hour clock formatting
-            const targetHours =; // 10:00 AM, 3:00 PM, 5:00 PM
+            // Fixed the missing array values: 10 AM (10), 3 PM (15), 5 PM (17)
+            const targetHours = [10, 15, 17]; 
             let nextRefresh = null;
 
-            // Find the next upcoming target time today
-            for (let hour of targetHours) {
+            // Loop to find the next scheduled hour for today
+            for (let i = 0; i < targetHours.length; i++) {
+                let hour = targetHours[i];
                 let targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 0, 0, 0);
                 if (targetTime > now) {
                     nextRefresh = targetTime;
@@ -98,21 +102,20 @@
                 }
             }
 
-            // If all times for today passed, target 10:00 AM tomorrow
+            // If all times for today have passed, target 10:00 AM tomorrow
             if (!nextRefresh) {
                 nextRefresh = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, targetHours[0], 0, 0, 0);
             }
 
-            // Calculate milliseconds until the next scheduled time
             const timeDifference = nextRefresh.getTime() - now.getTime();
 
-            // Set the browser timeout to reload
+            // Set background timer to trigger page reload
             setTimeout(function() {
                 window.location.reload();
             }, timeDifference);
         }
 
-        // Initialize the schedule tracker on page load
+        // Initialize schedule on boot
         scheduleNextRefresh();
     </script>
 
