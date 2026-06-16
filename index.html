@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Big Screen Slideshow</title>
+    <style>
+        /* Styles optimized for TV screens and mobile displays */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body, html {
+            width: 100%;
+            height: 100%;
+            background-color: #111; /* Dark background prevents screen burn-in */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .slideshow-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        .slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 1s ease-in-out; /* Smooth 1-second fade transition */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+        img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Keeps image proportions perfect without stretching */
+        }
+    </style>
+</head>
+<body>
+
+    <div class="slideshow-container">
+        <!-- Slide 1 -->
+        <div class="slide active">
+            <img src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/1000153495.png?raw=true" alt="Slide 1">
+        </div>
+        <!-- Slide 2 -->
+        <div class="slide">
+            <img src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/2%20of%2030%20new.png?raw=true" alt="Slide 2">
+        </div>
+        <!-- Slide 3 -->
+        <div class="slide">
+            <img src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/Gemini_Generated_Image_gx3ldvgx3ldvgx3l.png?raw=true" alt="Slide 3">
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // 1. SLIDESHOW LOGIC (Changes every 9 seconds)
+        // ==========================================
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const slideInterval = 9000; // 9 seconds in milliseconds
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(nextSlide, slideInterval);
+
+
+        // ==========================================
+        // 2. CLOCK REFRESH LOGIC (10 AM, 3 PM, 5 PM)
+        // ==========================================
+        function scheduleNextRefresh() {
+            const now = new Date();
+            
+            // Define target hours using 24-hour clock formatting
+            const targetHours =; // 10:00 AM, 3:00 PM, 5:00 PM
+            let nextRefresh = null;
+
+            // Find the next upcoming target time today
+            for (let hour of targetHours) {
+                let targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 0, 0, 0);
+                if (targetTime > now) {
+                    nextRefresh = targetTime;
+                    break;
+                }
+            }
+
+            // If all times for today passed, target 10:00 AM tomorrow
+            if (!nextRefresh) {
+                nextRefresh = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, targetHours[0], 0, 0, 0);
+            }
+
+            // Calculate milliseconds until the next scheduled time
+            const timeDifference = nextRefresh.getTime() - now.getTime();
+
+            // Set the browser timeout to reload
+            setTimeout(function() {
+                window.location.reload();
+            }, timeDifference);
+        }
+
+        // Initialize the schedule tracker on page load
+        scheduleNextRefresh();
+    </script>
+
+</body>
+</html>
