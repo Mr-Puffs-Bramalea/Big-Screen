@@ -135,15 +135,23 @@
 
     <div class="slideshow-container" id="slideshow">
         
-        <img class="slide" src="https://github.com/kspatel45/Mr-Puffs-Bramalea-Kiosk/blob/main/2%20of%2030%20new.png?raw=true">
+        <img class="slide" src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/image%20(13).png?raw=true">
         <img class="slide" src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/Gemini_Generated_Image_gx3ldvgx3ldvgx3l.png?raw=true">
-      <img class="slide" src="https://github.com/kspatel45/Mr-Puffs-Bramalea-Kiosk/blob/main/555%20new.jpeg?raw=true">
+      <img class="slide" src="https://github.com/Mr-Puffs-Bramalea/Big-Screen/blob/main/555.png?raw=true">
        
         
 
     </div>
 
     <script>
+
+        // Automatically reload the entire page every 15 minutes (900,000 milliseconds)
+// This will pull the fresh HTML/Images from GitHub without freezing your slideshow
+setInterval(function() {
+    window.location.reload(true); // 'true' forces a reload from the server, bypassing cache
+}, 900000);
+
+        
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
         const intervalTime = 9000;
