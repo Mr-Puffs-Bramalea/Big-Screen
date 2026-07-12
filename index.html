@@ -2,122 +2,160 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Big Screen Slideshow</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mr. Puffs Bramalea - Display</title>
     <style>
-        /* Forces the page into a strict full-screen window with zero scrollbars */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        :root {
+            --primary: #ff6600;
+            --dark: #111111;
+            --white: #ffffff;
         }
-        body, html {
-            width: 100vw;
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, sans-serif; }
+
+        body {
+            background-color: var(--dark);
+            color: var(--white);
             height: 100vh;
-            background-color: #000000; /* Pure black backgrounds look best on TVs */
+            width: 100vw;
             overflow: hidden;
-            position: fixed; /* Prevents mobile browser bouncing/scrolling */
-            top: 0;
-            left: 0;
+            display: flex;
+            flex-direction: column;
         }
+
+        /* Slideshow Container - Auto Adjusts */
         .slideshow-container {
-            width: 100%;
-            height: 100%;
+            flex: 1;
             position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000;
+            width: 100%;
         }
+
         .slide {
             position: absolute;
             width: 100%;
             height: 100%;
             opacity: 0;
-            transition: opacity 1000ms ease-in-out; /* Smooth 1-second crossfade */
+            transition: opacity 1.5s ease-in-out, transform 9s linear;
+            /* contain ensures the whole poster is always visible regardless of screen shape */
+            object-fit: contain; 
+            transform: scale(1);
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1.08); /* Reduced zoom slightly for better fit */
+        }
+
+        /* Bottom QR Action Bar - Responsive Flex */
+        .bottom-bar {
+            background: rgba(0, 0, 0, 0.95);
+            border-top: 3px solid var(--primary);
+            padding: 10px;
             display: flex;
             justify-content: center;
             align-items: center;
+            min-height: 160px;
+            z-index: 10;
+            flex-wrap: wrap; /* Allows cards to wrap on small screens */
+            gap: 15px;
         }
-        /* The active class makes the current slide visible */
-        .slide.active {
-            opacity: 1;
+
+        .qr-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 102, 0, 0.3);
+            flex: 1;
+            min-width: 280px; /* Prevents cards from getting too squished */
+            max-width: 400px;
         }
-        img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Keeps image proportions perfect without stretching */
+
+        .qr-item img {
+            width: clamp(70px, 10vw, 100px); /* Adjusts size based on screen width */
+            height: auto;
+            background: white;
+            padding: 5px;
+            border-radius: 5px;
+            flex-shrink: 0;
+        }
+
+        .qr-info {
+            text-align: left;
+            overflow: hidden;
+        }
+
+        .qr-info h2 {
+            font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+            color: var(--primary);
+            margin-bottom: 3px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .qr-info p {
+            font-size: clamp(0.75rem, 1.2vw, 0.9rem);
+            color: #ccc;
+            margin-bottom: 5px;
+        }
+
+        .click-btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .vip-item {
+            border: 2px solid var(--white);
+            box-shadow: 0 0 15px rgba(255, 102, 0, 0.4);
+        }
+
+        /* Responsive Mobile Tweak */
+        @media (max-height: 600px) {
+            .bottom-bar { min-height: 120px; padding: 5px; }
+            .qr-item { padding: 5px 10px; }
+            .qr-item img { width: 60px; }
         }
     </style>
 </head>
-<body>
+<body> 
 
-    <div class="slideshow-container">
-        <!-- Slide 1 -->
-        <div class="slide active">
-            <img src="https://github.com" alt="Slide 1">
-        </div>
-        <!-- Slide 2 -->
-        <div class="slide">
-            <img src="https://github.com" alt="Slide 2">
-        </div>
-        <!-- Slide 3 -->
-        <div class="slide">
-            <img src="https://github.com" alt="Slide 3">
-        </div>
+    <div class="slideshow-container" id="slideshow">
+        
+        <img class="slide" src="https://github.com/kspatel45/Mr-Puffs-Bramalea-Kiosk/blob/main/2%20of%2030%20new.png?raw=true">
+        <img class="slide" src="https://github.com/kspatel45/Mr-Puffs-Bramalea-Kiosk/blob/main/b2g1.png?raw=true">
+      <img class="slide" src="https://github.com/kspatel45/Mr-Puffs-Bramalea-Kiosk/blob/main/555%20new.jpeg?raw=true">
+       
+        
+
     </div>
 
     <script>
-        // ==========================================
-        // 1. FIXED SLIDESHOW LOGIC (Changes every 9 seconds)
-        // ==========================================
         let currentSlide = 0;
         const slides = document.querySelectorAll('.slide');
-        const slideInterval = 9000; // 9 seconds
+        const intervalTime = 9000;
 
         function nextSlide() {
-            if (slides.length === 0) return;
+            slides[currentSlide].style.transform = "scale(1)";
             slides[currentSlide].classList.remove('active');
             currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
         }
 
-        // Run nextSlide every 9 seconds
-        setInterval(nextSlide, slideInterval);
-
-
-        // ==========================================
-        // 2. FIXED CLOCK REFRESH LOGIC (10 AM, 3 PM, 5 PM)
-        // ==========================================
-        function scheduleNextRefresh() {
-            const now = new Date();
-            
-            // Fixed the missing array values: 10 AM (10), 3 PM (15), 5 PM (17)
-            const targetHours = [10, 15, 17]; 
-            let nextRefresh = null;
-
-            // Loop to find the next scheduled hour for today
-            for (let i = 0; i < targetHours.length; i++) {
-                let hour = targetHours[i];
-                let targetTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, 0, 0, 0);
-                if (targetTime > now) {
-                    nextRefresh = targetTime;
-                    break;
-                }
-            }
-
-            // If all times for today have passed, target 10:00 AM tomorrow
-            if (!nextRefresh) {
-                nextRefresh = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, targetHours[0], 0, 0, 0);
-            }
-
-            const timeDifference = nextRefresh.getTime() - now.getTime();
-
-            // Set background timer to trigger page reload
-            setTimeout(function() {
-                window.location.reload();
-            }, timeDifference);
-        }
-
-        // Initialize schedule on boot
-        scheduleNextRefresh();
+        setInterval(nextSlide, intervalTime);
     </script>
-
 </body>
 </html>
